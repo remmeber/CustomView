@@ -224,6 +224,35 @@ public class CustomLoginButton extends View {
         valueAnimator.start();
     }
 
+    public void finishLogin() {
+        stopLoading();
+        final ValueAnimator valueAnimator = getValueAnimator(1F, 0F);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float afloat = Float.parseFloat(valueAnimator.getAnimatedValue().toString());
+                float left = afloat * (width - height) / 2;
+                textPaint.setAlpha((int) (255 * (1 - afloat)));/*设置字体透明度*/
+                if (afloat == 0) {
+                    if (buttonRect != null)
+                        buttonRect.set(0, 0, width, height);
+                    else
+                        buttonRect = new RectF(0, 0, width, height);
+                    setClickable(true);
+                    invalidate();
+                    valueAnimator.cancel();
+                    return;
+                }
+                float right = width - left;
+                if (buttonRect != null)
+                    buttonRect.set(left, 0, right, height);
+                else buttonRect = new RectF(left, 0, right, height);
+                invalidate();
+            }
+        });
+        valueAnimator.start();
+    }
+
     private void startLoading() {
         rotateAnimation = new RotateAnimation(0F, 360F, width / 2, height / 2);
         rotateAnimation.setRepeatCount(Animation.INFINITE);
